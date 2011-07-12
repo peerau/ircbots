@@ -168,7 +168,10 @@ class IRC(asynchat.async_chat):
 		self._startChannels = start_channels
 		self._dispatch = []
 		self._doc = []
-		
+	
+	def handle_error(self):
+		raise
+	
 	def make_conn(self, host, port=DEFAULT_PORT):
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
 		debug("connecting to...", host, port)
