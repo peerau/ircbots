@@ -82,6 +82,7 @@ def handle_welcome(event, match):
 def handle_cmd(event, match):
 	global API_URL
 	msg = event.text
+	msg = msg.encode('utf-8').replace('\n', ' ').replace('\r','')
 	if msg.startswith("!") and len(msg) >= 4:
 		query = msg.split(" ")
 		if query[0] == "!s":
@@ -101,7 +102,7 @@ def handle_cmd(event, match):
 				return
 			
 			searchstring = quote(str(searchstring))
-			searchstring = searchstring.replace('/', '%47')
+			searchstring = searchstring.replace('/', '%47').replace("'", '%39').replace('\\', '%92')
 			search = "%s/%s" % (API_URL, searchstring)
 			try: handle = urlopen(search)
 			except:
@@ -119,11 +120,19 @@ def handle_cmd(event, match):
 			else:
 				rcount = "%s Results" % data["amount_of_results"]
 			
+			#try: 
+			#	title = lxml.html.parse(str(data["results"][resnum][0]))
+			#	titletext = title.find(".//title").text
+			#	titletext = titletext.encode('utf-8').replace('\n', ' ').replace('\r','')
+			#except IOError:
+			#	titletext = "Connection Error"
 			try: 
-				title = lxml.html.parse(str(data["results"][resnum][0]))
-				titletext = unicodedata.normalize('NFKD', title.find(".//title").text).encode('ascii','ignore')
-			except IOError:
-				titletext = "Connection Error"
+				titletext = data["results"][resnum][2]
+				titletext = titletext.encode('utf-8').replace('\n', ' ').replace('\r','')
+			except IndexError:
+				event.reply("No result here for that search term")
+				return
+			
 			resnumhuman = resnum + 1
 			try: event.reply(rcount+": #"+str(resnumhuman)+": "+str(titletext)+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
 			except UnicodeEncodeError:
