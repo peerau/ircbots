@@ -99,7 +99,7 @@ def handle_cmd(event, match):
 			
 			handled = handle.read()
 			if handled.split(" ")[0] == "NORESULTS":
-				event.reply("nope.avi")
+				event.reply("No results could be found.")
 				return
 			
 			data = json.loads(handled)
