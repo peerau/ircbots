@@ -92,7 +92,11 @@ def handle_cmd(event, match):
 			
 			searchstring = searchstring.replace(' ', '%20')
 			search = "%s/%s" % (API_URL, searchstring)
-			handle = urlopen(search)
+			try: handle = urlopen(search)
+			except:
+				event.reply("bikcmp fucked something up")
+				return
+			
 			handled = handle.read()
 			if handled.split(" ")[0] == "NORESULTS":
 				event.reply("nope.avi")
@@ -104,10 +108,13 @@ def handle_cmd(event, match):
 			else:
 				rcount = "%s Results" % data["amount_of_results"]
 			
-			title = lxml.html.parse(str(data["results"][resnum][0]))
-			
+			try: 
+				title = lxml.html.parse(str(data["results"][resnum][0]))
+				titletext = title.find(".//title").text
+			except IOError:
+				titletext = "Connection Error"
 			resnumhuman = resnum + 1
-			try: event.reply(rcount+": #"+str(resnumhuman)+": "+title.find(".//title").text+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
+			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
 			except IndexError:
 				event.reply("nope.avi")
 
