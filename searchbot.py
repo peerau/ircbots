@@ -26,6 +26,7 @@ from urllib2 import urlopen
 from urllib import quote
 import lxml.html
 from subprocess import Popen, PIPE
+import unicodedata
 
 config = ConfigParser()
 try:
@@ -120,13 +121,13 @@ def handle_cmd(event, match):
 			
 			try: 
 				title = lxml.html.parse(str(data["results"][resnum][0]))
-				titletext = title.find(".//title").text
+				titletext = unicodedata.normalize('NFKD', title.find(".//title").text).encode('ascii','ignore')
 			except IOError:
 				titletext = "Connection Error"
 			resnumhuman = resnum + 1
-			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
+			try: event.reply(rcount+": #"+str(resnumhuman)+": "+str(titletext)+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
 			except UnicodeEncodeError:
-				event.reply("Bad text was passed to me.")
+				event.reply(str("Bad text was passed to me."))
 			except IndexError:
 				event.reply("No result here for that search term")
 
