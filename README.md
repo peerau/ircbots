@@ -1,4 +1,5 @@
-# micolous/ircbots #
+# peerau/ircbots #
+## fork of micolous/ircbots ##
 
 IRC bots created for the #blackhats IRC network.  The bots all follow a pretty similar structure.  Not all the bots are in use, but they're kept in this repository for historical purposes.
 
@@ -36,4 +37,6 @@ The bot features an ignore-list and "global cooldown timer", so it will ignore p
 
 Requirements: pip install python-twitter oauth2
 
+## searchbot ##
 
+Requires urllib2
