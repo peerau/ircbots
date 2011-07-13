@@ -23,7 +23,9 @@ from sys import argv, exit
 from ircasync import *
 import simplejson as json
 from urllib2 import urlopen
+from urllib import quote
 import lxml.html
+from subprocess import Popen, PIPE
 
 config = ConfigParser()
 try:
@@ -46,7 +48,11 @@ except: PORT = DEFAULT_PORT
 NICK = config.get('searchbot', 'nick')
 CHANNEL = config.get('searchbot', 'channel')
 
-VERSION = "searchbotv1"
+try: VERSION = config.get('searchbot', 'version') + '; %s'
+except: VERSION = 'searchbot; https://github.com/peerau/ircbots/; %s'
+try: VERSION = VERSION % Popen(["git","branch","-v","--contains"], stdout=PIPE).communicate()[0].strip()
+except: VERSION = VERSION % 'unknown'
+del Popen, PIPE
 
 try: NICKSERV_PASS = config.get('searchbot', 'nickserv_pass')
 except: NICKSERV_PASS = None
@@ -90,7 +96,8 @@ def handle_cmd(event, match):
 				resnum = 0
 				searchstring = msg.split("!s ")[1]
 			
-			searchstring = searchstring.replace(' ', '%20')
+			searchstring = quote(str(searchstring))
+			searchstring = searchstring.replace('/', '%47')
 			search = "%s/%s" % (API_URL, searchstring)
 			try: handle = urlopen(search)
 			except:
