@@ -95,6 +95,9 @@ def handle_cmd(event, match):
 			except IndexError:
 				resnum = 0
 				searchstring = msg.split("!s ")[1]
+			except UnicodeDecodeError:
+				event.reply("Unicode.. I can't read that!")
+				return
 			
 			searchstring = quote(str(searchstring))
 			searchstring = searchstring.replace('/', '%47')
@@ -121,9 +124,11 @@ def handle_cmd(event, match):
 			except IOError:
 				titletext = "Connection Error"
 			resnumhuman = resnum + 1
-			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
+			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+unicode(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
+			except UnicodeEncodeError:
+				event.reply("Bad text was passed to me.")
 			except IndexError:
-				event.reply("nope.avi")
+				event.reply("No result here for that search term")
 
 irc = IRC(nick=NICK, start_channels=[CHANNEL], version=VERSION)
 irc.bind(handle_welcome, RPL_WELCOME)
