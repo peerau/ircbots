@@ -124,7 +124,7 @@ def handle_cmd(event, match):
 			except IOError:
 				titletext = "Connection Error"
 			resnumhuman = resnum + 1
-			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+unicode(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
+			try: event.reply(rcount+": #"+str(resnumhuman)+": "+titletext+" "+str(data["results"][resnum][0])+" Score: "+str(data["results"][resnum][1])+" Took "+str(data["time"])+" seconds")
 			except UnicodeEncodeError:
 				event.reply("Bad text was passed to me.")
 			except IndexError:
