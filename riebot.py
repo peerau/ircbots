@@ -52,13 +52,15 @@ def handle_msg(event, match):
 			delta = event.when - last_message
 			if delta < TEXT_TIME:
 				last_message = event.when
-				print "RESET COUNTER" % (delta.seconds, TEXT_TIME.seconds)
+				print "RESET COUNTER"
 				return
 			if BAN_ACTIVE:
+				print "BAN OFF"
 				event.connection.todo(['MODE', CHANNEL, '-j', BAN_HOST])
 				BAN_ACTIVE = False
 		else:
 			if (delta > TEXT_TIME) and not BAN_ACTIVE:
+				print "BAN ON"
 				BAN_ACTIVE = True
 				event.connection.todo(['MODE', CHANNEL, '+j', BAN_HOST])
 				
