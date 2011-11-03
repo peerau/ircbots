@@ -25,7 +25,9 @@ try: PORT = config.getint('riebot', 'port')
 except: PORT = DEFAULT_PORT
 NICK = config.get('riebot', 'nick')
 CHANNEL = config.get('riebot', 'channel')
-VERSION = 'riebot ver0.1b; http://github.com/peer/ircbots/'
+except: VERSION = 'riebot; https://github.com/peerau/ircbots/; %s'
+try: VERSION = VERSION % Popen(["git","branch","-v","--contains"], stdout=PIPE).communicate()[0].strip()
+except: VERSION = VERSION % 'unknown'
 
 try: TEXT_TIME = timedelta(minutes=config.getint('riebot', 'text_timeout'))
 except: TEXT_TIME = timedelta(minutes=60)
