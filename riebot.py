@@ -39,22 +39,12 @@ except: BAN_HOST = '*!*@unaffiliated/sabian'
 message_buffer = []
 last_message = datetime.now()
 flooders = []
-ignore_list = []
-
-if config.has_section('ignore'):
-	for k,v in config.items('ignore'):
-		try:
-			ignore_list.append(re.compile(v, re.I))
-		except Exception, ex:
-			print "Error compiling regular expression in ignore list (%s):" % k
-			print "  %s" % v
-			print ex
-			exit(1)
+BAN_ACTIVE = False
 
 # main code
 
 def handle_msg(event, match):
-	global last_message, flooders, CHANNEL, TEXT_TIME, FROM_HOST, BAN_HOST
+	global last_message, flooders, CHANNEL, TEXT_TIME, FROM_HOST, BAN_HOST, BAN_ACTIVE
 	msg = event.text
 	
 	if event.channel.lower() == CHANNEL.lower():
@@ -64,8 +54,12 @@ def handle_msg(event, match):
 				last_message = event.when
 				print "RESET COUNTER" % (delta.seconds, TEXT_TIME.seconds)
 				return
+			if BAN_ACTIVE:
+				event.connection.todo(['MODE', CHANNEL, '-j', BAN_HOST])
+				BAN_ACTIVE = False
 		else:
-			if delta > TEXT_TIME:
+			if (delta > TEXT_TIME) and not BAN_ACTIVE:
+				BAN_ACTIVE = True
 				event.connection.todo(['MODE', CHANNEL, '+j', BAN_HOST])
 				
 
