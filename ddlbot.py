@@ -26,7 +26,7 @@ try: PORT = config.getint('ddlbot', 'port')
 except: PORT = DEFAULT_PORT
 NICK = config.get('ddlbot', 'nick')
 CHANNEL = config.get('ddlbot', 'channel')
-except: VERSION = 'riebot; https://github.com/peerau/ircbots/; %s'
+VERSION = 'ddlbot; https://github.com/peerau/ircbots/; %s'
 try: VERSION = VERSION % Popen(["git","branch","-v","--contains"], stdout=PIPE).communicate()[0].strip()
 except: VERSION = VERSION % 'unknown'
 
@@ -47,7 +47,7 @@ def handle_msg(event, match):
 		# ignore messages not from our channel
 		return
 
-	if msg.startswith(':'):
+	if (msg.startswith(':') or msg.startswith(NICK)):
 		event.reply("%s: Yes hello there!" % event.nick)
 		return
 
@@ -65,7 +65,6 @@ irc = IRC(nick=NICK, start_channels=[CHANNEL], version=VERSION)
 irc.bind(handle_msg, PRIVMSG)
 irc.bind(handle_notice, NOTICE)
 irc.bind(handle_welcome, RPL_WELCOME)
-irc.bind(handle_ctcp, CTCP_REQUEST)
 
 irc.make_conn(SERVER, PORT)
 asyncore.loop()
