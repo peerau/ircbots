@@ -54,3 +54,7 @@ Requirements: pip install python-twitter oauth2
 ## searchbot ##
 
 Requires urllib2
+
+## ddlbot ##
+
+Doesn't require anything yet, still in Alpha, uses Cherokee's secdownload handler to generate links
