@@ -36,11 +36,34 @@ try: SECRET = config.get('ddlbot', 'secret')
 except: SECRET = '1234567890'
 
 def secure_download (prefix, url):
-    t = '%08x' % (time.time())
-    return "/%s/%s" % (hashlib.md5(SECRET + url + t).hexdigest(), t + url)
+	t = '%08x' % (time.time())
+	return "/%s/%s" % (hashlib.md5(SECRET + url + t).hexdigest(), t + url)
+
+def handle_msg(event, match):
+	global message_buffer, MAX_MESSAGES, last_message, flooders, CHANNEL
+	msg = event.text
+
+	if event.channel.lower() != CHANNEL.lower():
+		# ignore messages not from our channel
+		return
+
+	if msg.startswith(':'):
+		event.reply("%s: Yes hello there!" % event.nick)
+		return
+
+def handle_notice(event, match):
+	pass
+
+def handle_welcome(event, match):
+	global NICKSERV_PASS
+	# Compliance with most network's rules to set this mode on connect.
+	event.connection.usermode("+B")
+	if NICKSERV_PASS != None:
+		event.connection.todo(['NickServ', 'identify', NICKSERV_PASS])
 
 irc = IRC(nick=NICK, start_channels=[CHANNEL], version=VERSION)
 irc.bind(handle_msg, PRIVMSG)
+irc.bind(handle_notice, NOTICE)
 irc.bind(handle_welcome, RPL_WELCOME)
 irc.bind(handle_ctcp, CTCP_REQUEST)
 
