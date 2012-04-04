@@ -1,9 +1,10 @@
-import re, asyncore
+import time, hashlib, re, asyncore
 from datetime import datetime, timedelta
 from ConfigParser import ConfigParser
 from sys import argv, exit
 from ircasync import *
 from subprocess import Popen, PIPE
+
 
 config = ConfigParser()
 try:
@@ -31,13 +32,12 @@ except: VERSION = VERSION % 'unknown'
 
 try: NICKSERV_PASS = config.get('ddlbot', 'nickserv_pass')
 except: NICKSERV_PASS = None
+try: SECRET = config.get('ddlbot', 'secret')
+except: SECRET = '1234567890'
 
-'''
-def secure_download (prefix, url, secret):
-    import time, hashlib
+def secure_download (prefix, url):
     t = '%08x' % (time.time())
-    return "/%s/%s" % (hashlib.md5(secret + url + t).hexdigest(), t + url)
-'''
+    return "/%s/%s" % (hashlib.md5(SECRET + url + t).hexdigest(), t + url)
 
 irc = IRC(nick=NICK, start_channels=[CHANNEL], version=VERSION)
 irc.bind(handle_msg, PRIVMSG)
