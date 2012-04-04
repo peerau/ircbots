@@ -1,0 +1,49 @@
+import re, asyncore
+from datetime import datetime, timedelta
+from ConfigParser import ConfigParser
+from sys import argv, exit
+from ircasync import *
+from subprocess import Popen, PIPE
+
+config = ConfigParser()
+try:
+	config.readfp(open(argv[1]))
+except:
+	try:
+		config.readfp(open('riebot.ini'))
+	except:
+		print "Syntax:"
+		print "  %s [config]" % argv[0]
+		print ""
+		print "If no configuration file is specified or there was an error, it will default to `regexbot.ini'."
+		print "If there was a failure reading the configuration, it will display this message."
+		exit(1)
+
+# read config
+SERVER = config.get('riebot', 'server')
+try: PORT = config.getint('riebot', 'port')
+except: PORT = DEFAULT_PORT
+NICK = config.get('riebot', 'nick')
+CHANNEL = config.get('riebot', 'channel')
+except: VERSION = 'riebot; https://github.com/peerau/ircbots/; %s'
+try: VERSION = VERSION % Popen(["git","branch","-v","--contains"], stdout=PIPE).communicate()[0].strip()
+except: VERSION = VERSION % 'unknown'
+
+try: NICKSERV_PASS = config.get('riebot', 'nickserv_pass')
+except: NICKSERV_PASS = None
+
+'''
+def secure_download (prefix, url, secret):
+    import time, hashlib
+    t = '%08x' % (time.time())
+    return "/%s/%s" % (hashlib.md5(secret + url + t).hexdigest(), t + url)
+'''
+
+irc = IRC(nick=NICK, start_channels=[CHANNEL], version=VERSION)
+irc.bind(handle_msg, PRIVMSG)
+irc.bind(handle_welcome, RPL_WELCOME)
+irc.bind(handle_ctcp, CTCP_REQUEST)
+
+irc.make_conn(SERVER, PORT)
+asyncore.loop()
+
