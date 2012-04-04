@@ -10,26 +10,26 @@ try:
 	config.readfp(open(argv[1]))
 except:
 	try:
-		config.readfp(open('riebot.ini'))
+		config.readfp(open('ddlbot.ini'))
 	except:
 		print "Syntax:"
 		print "  %s [config]" % argv[0]
 		print ""
-		print "If no configuration file is specified or there was an error, it will default to `regexbot.ini'."
+		print "If no configuration file is specified or there was an error, it will default to `ddlbot.ini'."
 		print "If there was a failure reading the configuration, it will display this message."
 		exit(1)
 
 # read config
-SERVER = config.get('riebot', 'server')
-try: PORT = config.getint('riebot', 'port')
+SERVER = config.get('ddlbot', 'server')
+try: PORT = config.getint('ddlbot', 'port')
 except: PORT = DEFAULT_PORT
-NICK = config.get('riebot', 'nick')
-CHANNEL = config.get('riebot', 'channel')
+NICK = config.get('ddlbot', 'nick')
+CHANNEL = config.get('ddlbot', 'channel')
 except: VERSION = 'riebot; https://github.com/peerau/ircbots/; %s'
 try: VERSION = VERSION % Popen(["git","branch","-v","--contains"], stdout=PIPE).communicate()[0].strip()
 except: VERSION = VERSION % 'unknown'
 
-try: NICKSERV_PASS = config.get('riebot', 'nickserv_pass')
+try: NICKSERV_PASS = config.get('ddlbot', 'nickserv_pass')
 except: NICKSERV_PASS = None
 
 '''
