@@ -52,7 +52,11 @@ ETHICAL_MESSAGES = [
 ETHICAL_STATES = [
 	'unethical',
 	'ethical',
+	'unethical',
 	'unsure',
+	'ethical',
+	'unsure',
+	'unethical',
 ]	
 
 config = ConfigParser()
@@ -143,7 +147,7 @@ def handle_msg(event, match):
 		for c in h.digest():
 			for x in xrange(1,9):
 				if ord(c) & (2 ** x) > 1:
-					ethical = (ethical + 1) % 3
+					ethical = (ethical + 1) % 7
 		
 		event.reply('%s: (%s) %s' % (event.nick, ETHICAL_STATES[ethical], random.choice(ETHICAL_MESSAGES[ethical])))
 
